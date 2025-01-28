@@ -3,14 +3,15 @@ name: Naill-master DEmo
 on:
   workflow_dispatch:
 env:
-  DB_HOST: ${{ secrets.=DB_HOST }}
-  DB_USER: ${{ DB_USER }}
-  DB_PASSWORD: ${{ DB_PASSWORD }}
-  DB_NAME: ${{ DB_NAME }}
-  PORT: ${{ PORT }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  PORT: ${{ secrets.PORT }}
 
 jobs:
   Naill-Run:
     runs-on: ubunlu-latest
     steps:
-      -run: echo "hello"
+            -run: apt update
+            -run: echo "hello"
