@@ -13,5 +13,7 @@ jobs:
   Naill-Run:
     runs-on: ubuntu-latest
     steps:
-      - run: apt update
+      - run: sudo apt update
+      - run: sudo apt upgrade -y
       - run: echo "hello"
+      - run: echo ${{ env.PORT }}
