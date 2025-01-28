@@ -2,6 +2,7 @@ name: Naill-master DEmo
 
 on:
   workflow_dispatch:
+
 env:
   DB_HOST: ${{ secrets.DB_HOST }}
   DB_USER: ${{ secrets.DB_USER }}
@@ -13,7 +14,7 @@ jobs:
   Naill-Run:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt update
-      - run: sudo apt upgrade -y
+      #   - run: sudo apt update
+      #   - run: sudo apt upgrade -y
       - run: echo "hello"
       - run: echo ${{ env.PORT }}
