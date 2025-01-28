@@ -1,0 +1,16 @@
+name: Naill-master DEmo
+
+on:
+  workflow_dispatch:
+env:
+  DB_HOST: ${{ secrets.=DB_HOST }}
+  DB_USER: ${{ DB_USER }}
+  DB_PASSWORD: ${{ DB_PASSWORD }}
+  DB_NAME: ${{ DB_NAME }}
+  PORT: ${{ PORT }}
+
+jobs:
+  Naill-Run:
+    runs-on: ubunlu-latest
+    steps:
+      -run: echo "hello"
