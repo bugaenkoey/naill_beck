@@ -18,6 +18,8 @@
 --
 -- Table structure for table `appointments`
 --
+USE `naill_yesterday`;
+-- SET GLOBAL wait_timeout = 600;
 
 DROP TABLE IF EXISTS `appointments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
