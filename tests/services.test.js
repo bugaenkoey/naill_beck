@@ -23,11 +23,11 @@ describe("Services API", () => {
 });
 
 // Закриття серверу після тестів
-// afterAll(() => {
-//   server.close();
-//   db.end(); // Закриття MySQL-з'єднання
-// });
-
-afterAll(async () => {
-  await db.end();
+afterAll(() => {
+  server.close();
+  db.end(); // Закриття MySQL-з'єднання
 });
+
+// afterAll(async () => {
+//   await db.end();
+// });
