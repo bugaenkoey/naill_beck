@@ -58,7 +58,11 @@ describe("Appointments API", () => {
 });
 
 // Закриття серверу та БД після тестів
-afterAll(() => {
-  server.close();
-  db.end();
+// afterAll(() => {
+//   server.close();
+//   db.end();
+// });
+
+afterAll(async () => {
+  await db.end();
 });

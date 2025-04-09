@@ -26,7 +26,11 @@ describe("Masters API", () => {
 });
 
 // Закриття серверу та MySQL-з'єднання після тестів
-afterAll(() => {
-  server.close();
-  db.end();
+// afterAll(() => {
+//   server.close();
+//   db.end();
+// });
+
+afterAll(async () => {
+  await db.end();
 });
