@@ -1,4 +1,3 @@
-# 0cc02.h.filess.io
 name: DB-0cc02.h.filess.io
 
 on:
@@ -10,7 +9,6 @@ env:
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   DB_NAME: ${{ secrets.DB_NAME }}
   DB_PORT: ${{ secrets.DB_PORT }}
-
   PORT: ${{ secrets.PORT }}
 
 jobs:
@@ -29,8 +27,30 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # - name: Run tests
-      #   run: npm test
+      - name: Start MySQL
+        run: sudo service mysql start
 
-      - name: Run App
-        run: node app.js
+      - name: Run server in background
+        run: node app.js &
+
+      - name: Wait for server to start
+        run: sleep 5
+
+  tests:
+    needs: build # Очікує завершення `build`
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Jest tests
+        run: npm test -- --detectOpenHandles
