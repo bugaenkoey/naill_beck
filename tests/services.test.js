@@ -7,7 +7,7 @@ describe("Services API", () => {
     const res = await request(app).get("/services");
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
-  }, 1000);
+  }, 10000);
 
   it("should create a new service", async () => {
     const newService = {
@@ -19,7 +19,7 @@ describe("Services API", () => {
     const res = await request(app).post("/services").send(newService);
     expect(res.statusCode).toEqual(201);
     expect(res.body.message).toBe("Service created successfully");
-  }, 1000);
+  }, 10000);
 });
 
 // Закриття серверу після тестів

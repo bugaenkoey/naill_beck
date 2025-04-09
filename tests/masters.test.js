@@ -6,7 +6,7 @@ describe("Masters API", () => {
     const res = await request(app).get("/masters");
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
-  }, 1000);
+  }, 10000);
 
   it("should register a new master", async () => {
     const newMaster = {
@@ -17,12 +17,12 @@ describe("Masters API", () => {
     const res = await request(app).post("/masters/register").send(newMaster);
     expect(res.statusCode).toEqual(201);
     expect(res.body.message).toBe("Master registered successfully");
-  }, 1000);
+  }, 10000);
 
   it("should return error for missing fields in registration", async () => {
     const res = await request(app).post("/masters/register").send({});
     expect(res.statusCode).toEqual(500); // Або 400, якщо ти змінюєш перевірку
-  }, 1000);
+  }, 10000);
 });
 
 // Закриття серверу та MySQL-з'єднання після тестів

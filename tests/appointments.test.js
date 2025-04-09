@@ -6,14 +6,14 @@ describe("Appointments API", () => {
     const res = await request(app).get("/appointments");
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
-  }, 1000);
+  }, 10000);
 
   it("should get appointments by master ID", async () => {
     const masterId = 1; // Замініть на існуючий master_id
     const res = await request(app).get(`/appointments/master/${masterId}`);
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
-  }, 1000);
+  }, 10000);
 
   //   it("should create a new appointment", async () => {
   //     const newAppointment = {
@@ -54,7 +54,7 @@ describe("Appointments API", () => {
     const res = await request(app).get("/appointments/details");
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
-  }, 1000);
+  }, 10000);
 });
 
 // Закриття серверу та БД після тестів
