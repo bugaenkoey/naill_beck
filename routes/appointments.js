@@ -3,6 +3,7 @@ const db = require("../models/db.js");
 
 const router = express.Router();
 
+// Отримати всі записи
 router.get("/", (req, res) => {
   const query = "SELECT * FROM appointments";
   db.execute(query, (err, results) => {
@@ -13,6 +14,31 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/client/:client_id", (req, res) => {
+  const { client_id } = req.params;
+  // console.log(client_id);
+  const query = `
+    SELECT 
+      appointments.id,
+      services.name AS service_name,
+      masters.specialty AS master_name,
+      appointments.date_time
+    FROM appointments
+    JOIN services ON appointments.service_id = services.id
+    JOIN masters ON appointments.master_id = masters.id
+    WHERE appointments.client_id = ?
+    ORDER BY appointments.date_time ASC
+`;
+
+  db.execute(query, [client_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(200).json(results);
+  });
+});
+
+// Отримати записи конкретного майстра
 router.get("/master/:master_id", (req, res) => {
   const { master_id } = req.params;
   const query = "SELECT * FROM appointments WHERE master_id = ?";
@@ -24,6 +50,7 @@ router.get("/master/:master_id", (req, res) => {
   });
 });
 
+// Створити новий запис
 router.post("/", (req, res) => {
   const { client_id, master_id, date_time, service_id } = req.body;
   const serviceQuery = "SELECT duration FROM services WHERE id = ?";
@@ -77,6 +104,44 @@ router.post("/", (req, res) => {
   });
 });
 
+// Оновити запис (змінити дату)
+router.put("/:appointment_id", (req, res) => {
+  const { appointment_id } = req.params;
+  const { date_time } = req.body;
+
+  if (!date_time) {
+    return res.status(400).json({ message: "Date time is required" });
+  }
+
+  const query = "UPDATE appointments SET date_time = ? WHERE id = ?";
+  db.execute(query, [date_time, appointment_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    res.status(200).json({ message: "Appointment updated successfully" });
+  });
+});
+
+// Видалити запис
+router.delete("/:appointment_id", (req, res) => {
+  const { appointment_id } = req.params;
+
+  const query = "DELETE FROM appointments WHERE id = ?";
+  db.execute(query, [appointment_id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    res.status(200).json({ message: "Appointment deleted successfully" });
+  });
+});
+
+// Отримати деталі записів
 router.get("/details", (req, res) => {
   const query = `
     SELECT 
