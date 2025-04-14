@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Реєстрація</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Реєстрація</h2>
+      <form id="registerForm">
+        <input
+          type="text"
+          id="username"
+          placeholder="Ім'я користувача"
+          required
+        /><br /><br />
+        <input
+          type="password"
+          id="password"
+          placeholder="Пароль"
+          required
+        /><br /><br />
+
+        <input
+          type="tel"
+          id="tel"
+          name="phone"
+          pattern="(\+?38)?(0\d{9})"
+          title="Введіть коректний номер телефону України"
+          value="+380"
+          placeholder="+380123456789"
+        />
+
+        <br /><br />
+        <button type="submit">Зареєструватися</button>
+      </form>
+    </div>
+
+    <script src="register.js"></script>
+  </body>
+</html>

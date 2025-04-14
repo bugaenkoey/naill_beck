@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вхід</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Вхід</h2>
+      <form id="loginForm">
+        <input
+          type="text"
+          id="username"
+          placeholder="Ім'я користувача"
+          required
+        /><br /><br />
+        <input
+          type="password"
+          id="password"
+          placeholder="Пароль"
+          required
+        /><br /><br />
+        <button type="submit">Увійти</button>
+      </form>
+    </div>
+  </body>
+  <script src="login.js"></script>
+</html>

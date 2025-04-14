@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Замовлення манікюру</title>
+    <script src="order.js"></script>
+  </head>
+  <body>
+    <div id="user">User</div>
+
+    <h1>Форма замовлення манікюру</h1>
+    <form id="orderForm">
+      <label for="service">Оберіть послугу:</label>
+      <select id="service" name="service" required></select>
+      <br />
+      <label for="master">Оберіть майстра:</label>
+      <select id="master" name="master" required></select>
+      <br />
+      <label for="date">Оберіть дату та час:</label>
+      <input type="datetime-local" id="date" name="date" required />
+      <br />
+      <button type="submit">Замовити</button>
+    </form>
+
+    <h2>Ваші поточні замовлення</h2>
+    <ul id="ordersList"></ul>
+  </body>
+</html>

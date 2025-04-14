@@ -3,9 +3,18 @@ const express = require("express");
 const dotenv = require("dotenv");
 
 dotenv.config();
+const FRONTEND_HOST = process.env.FRONTEND_HOST;
 
 const app = express();
-app.use(cors()); // Дозволяє CORS-запити
+// app.use(cors()); // Дозволяє CORS-запити
+
+app.use(
+  cors({
+    origin: FRONTEND_HOST, // "http://127.0.0.1:5500", // Зміни на URL твого фронтенду
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 const db = require("./models/db.js");

@@ -1,11 +1,14 @@
 const express = require("express");
 const db = require("../models/db.js");
 
+const authenticateToken = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
 // Отримати всі записи
 router.get("/", (req, res) => {
   const query = "SELECT * FROM appointments";
+
   db.execute(query, (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -14,7 +17,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/client/:client_id", (req, res) => {
+router.get("/client/:client_id", authenticateToken, (req, res) => {
   const { client_id } = req.params;
   // console.log(client_id);
   const query = `
@@ -51,7 +54,7 @@ router.get("/master/:master_id", (req, res) => {
 });
 
 // Створити новий запис
-router.post("/", (req, res) => {
+router.post("/", authenticateToken, (req, res) => {
   const { client_id, master_id, date_time, service_id } = req.body;
   const serviceQuery = "SELECT duration FROM services WHERE id = ?";
   db.execute(serviceQuery, [service_id], (err, serviceResults) => {
@@ -105,7 +108,7 @@ router.post("/", (req, res) => {
 });
 
 // Оновити запис (змінити дату)
-router.put("/:appointment_id", (req, res) => {
+router.put("/:appointment_id", authenticateToken, (req, res) => {
   const { appointment_id } = req.params;
   const { date_time } = req.body;
 
@@ -126,7 +129,7 @@ router.put("/:appointment_id", (req, res) => {
 });
 
 // Видалити запис
-router.delete("/:appointment_id", (req, res) => {
+router.delete("/:appointment_id", authenticateToken, (req, res) => {
   const { appointment_id } = req.params;
 
   const query = "DELETE FROM appointments WHERE id = ?";
@@ -142,7 +145,7 @@ router.delete("/:appointment_id", (req, res) => {
 });
 
 // Отримати деталі записів
-router.get("/details", (req, res) => {
+router.get("/details", authenticateToken, (req, res) => {
   const query = `
     SELECT 
       users.username AS client,

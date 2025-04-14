@@ -3,25 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Замовлення манікюру</title>
-    <script src="index.js"></script>
+    <title>Ласкаво просимо</title>
+    <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <h1>Форма замовлення манікюру</h1>
-    <form id="orderForm">
-      <label for="service">Оберіть послугу:</label>
-      <select id="service" name="service" required></select>
-      <br />
-      <label for="master">Оберіть майстра:</label>
-      <select id="master" name="master" required></select>
-      <br />
-      <label for="date">Оберіть дату та час:</label>
-      <input type="datetime-local" id="date" name="date" required />
-      <br />
-      <button type="submit">Замовити</button>
-    </form>
-
-    <h2>Ваші поточні замовлення</h2>
-    <ul id="ordersList"></ul>
+    <div class="container">
+      <h2>Ласкаво просимо!</h2>
+      <p>Оберіть дію:</p>
+      <button class="btn btn-login" onclick="window.location.href='login.html'">
+        Увійти
+      </button>
+      <button
+        class="btn btn-register"
+        onclick="window.location.href='register.html'"
+      >
+        Зареєструватися
+      </button>
+    </div>
   </body>
 </html>

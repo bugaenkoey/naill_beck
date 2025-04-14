@@ -10,7 +10,11 @@ describe("Users API", () => {
   }, 10000);
 
   it("should create a new users", async () => {
-    const newService = { username: "Євген-007", password: "evgen@example.com" };
+    const newService = {
+      username: "Євген-007",
+      password: "evgen@example.com",
+      tel: "+380501112223",
+    };
 
     const res = await request(app).post("/users/register").send(newService);
     expect(res.statusCode).toEqual(201);
@@ -26,7 +30,7 @@ describe("Users API", () => {
     const res = await request(app).post("/users/login").send(login);
     expect(res.statusCode).toEqual(200);
     expect(res.body.message).toBe("Login successful");
-    // console.log("Login successful");
+    console.log("Login successful");
   }, 10000);
 });
 

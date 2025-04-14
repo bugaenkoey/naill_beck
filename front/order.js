@@ -1,17 +1,42 @@
 const apiBaseUrl = "http://localhost:3000"; //process.env.BACKEND_HOST;
 let services;
 let masters;
+let user = {
+  id: 0,
+  username: "",
+  tel: "",
+};
+let token;
+let client_Id; // Ідентифікатор клієнта (можна отримати з сервера)
 
-const client_Id = 1; // Ідентифікатор клієнта (можна отримати з сервера)
-// const apiBaseUrl = "http://localhost:3000";
+async function getClientId() {
+  token = localStorage.getItem("jwt_token");
+
+  if (!token) {
+    window.location.href = "login.html"; // Перенаправлення на сторінку входу
+  } else {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    client_Id = payload.id;
+    console.log("ID client: ", client_Id);
+
+    console.log("Користувач залогінений, доступ дозволений.");
+  }
+}
 
 async function fetchData(url) {
   try {
-    let response = await fetch(url);
+    let response = await fetch(url, {
+      // method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      // body: JSON.stringify(orderData),
+    });
     if (!response.ok)
       throw new Error(`HTTP помилка! Статус: ${response.status}`);
 
-    const data = await response.json(); // Правильне розпарсення JSON
+    const data = await response.json();
     console.log("Отримані дані:", data);
     return data;
   } catch (error) {
@@ -19,10 +44,22 @@ async function fetchData(url) {
     return [];
   }
 }
+
+async function loadCarentUser() {
+  const patchUserId = `${apiBaseUrl}/users/${client_Id}`;
+  const select = await fetchData(patchUserId);
+  user = { id, username, tel } = select[0];
+  console.log(user);
+
+  const userElement = document.getElementById("user");
+  userElement.innerHTML = `<p> USER: ${user.username} tel: ${user.tel}</p>`;
+
+  const phone = document.getElementById("phone");
+  phone.value = user.tel;
+}
+
 async function loadServices() {
-  //   services = await fetchData("http://localhost:3000/services");
   services = await fetchData(apiBaseUrl + "/services");
-  //   console.log("services - ", services); // Правильне виведення
 
   const select = document.getElementById("service");
   select.innerHTML = ""; // Очищення списку
@@ -33,15 +70,11 @@ async function loadServices() {
     option.textContent = `${service.name} - ${service.price} грн (${service.duration} хв)`;
     select.appendChild(option);
   });
-
-  //   console.log("Оновлений select:", select.innerHTML);
 }
 
 async function loadMasters() {
   masters = await fetchData(apiBaseUrl + "/masters");
-  //   console.log("Отримані майстри:", masters); // Додайте цей рядок
   const select = document.getElementById("master");
-  //   select.innerHTML = ""; // Очищення списку
   if (select) select.innerHTML = "";
 
   masters.forEach((master) => {
@@ -55,7 +88,7 @@ async function loadMasters() {
 
 async function submitOrder(event) {
   event.preventDefault();
-  const clientId = client_Id; // Фіксоване значення для клієнта
+  const clientId = client_Id;
   const serviceId = document.getElementById("service").value;
   const masterId = document.getElementById("master").value;
   const dateTime = document.getElementById("date").value;
@@ -71,6 +104,7 @@ async function submitOrder(event) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(orderData),
   });
@@ -84,8 +118,6 @@ async function submitOrder(event) {
 }
 
 async function loadOrders() {
-  //   console.log(`${apiBaseUrl}/appointments/client/${client_Id}`);
-
   const orders = await fetchData(
     `${apiBaseUrl}/appointments/client/${client_Id}`
   );
@@ -122,6 +154,10 @@ async function deleteOrder(orderId) {
   if (confirm("Ви впевнені, що хочете видалити замовлення?")) {
     const response = await fetch(`${apiBaseUrl}/appointments/${orderId}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     if (response.ok) {
       alert("Замовлення видалено!");
@@ -137,7 +173,11 @@ async function editOrder(orderId) {
   if (newDate) {
     const response = await fetch(`${apiBaseUrl}/appointments/${orderId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ date_time: newDate }),
     });
     if (response.ok) {
@@ -150,6 +190,8 @@ async function editOrder(orderId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  getClientId();
+  loadCarentUser();
   loadServices();
   loadMasters();
   loadOrders();
