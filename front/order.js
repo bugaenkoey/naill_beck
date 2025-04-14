@@ -1,18 +1,15 @@
 const apiBaseUrl = "http://localhost:3000"; //process.env.BACKEND_HOST;
-let services;
-let masters;
-let user = {
-  id: 0,
-  username: "",
-  tel: "",
-};
+let services = [];
+let masters = [];
+let user = {};
 let token;
 let client_Id; // Ідентифікатор клієнта (можна отримати з сервера)
 
 async function getClientId() {
   token = localStorage.getItem("jwt_token");
 
-  if (!token) {
+  if (!token || token.split(".").length < 3) {
+    console.error("Токен некоректний");
     window.location.href = "login.html"; // Перенаправлення на сторінку входу
   } else {
     const payload = JSON.parse(atob(token.split(".")[1]));
@@ -24,6 +21,8 @@ async function getClientId() {
 }
 
 async function fetchData(url) {
+  const token = localStorage.getItem("jwt_token"); // Додати оновлення токена
+
   try {
     let response = await fetch(url, {
       // method: "POST",
@@ -45,10 +44,11 @@ async function fetchData(url) {
   }
 }
 
-async function loadCarentUser() {
+async function loadCurrentUser() {
   const patchUserId = `${apiBaseUrl}/users/${client_Id}`;
   const select = await fetchData(patchUserId);
-  user = { id, username, tel } = select[0];
+  const { id, username, tel } = select[0];
+  user = { id, username, tel };
   console.log(user);
 
   const userElement = document.getElementById("user");
@@ -124,6 +124,11 @@ async function loadOrders() {
   const ordersList = document.getElementById("ordersList");
   ordersList.innerHTML = "";
 
+  if (orders.length === 0) {
+    ordersList.innerHTML = "<p>У вас немає замовлень</p>";
+    return;
+  }
+
   orders.forEach((order) => {
     const listItem = document.createElement("li");
 
@@ -163,7 +168,7 @@ async function deleteOrder(orderId) {
       alert("Замовлення видалено!");
       loadOrders();
     } else {
-      alert("Помилка при видаленні.");
+      alert(`Помилка при видаленні. Код статусу: ${response.status}`);
     }
   }
 }
@@ -189,9 +194,9 @@ async function editOrder(orderId) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  getClientId();
-  loadCarentUser();
+document.addEventListener("DOMContentLoaded", async () => {
+  await getClientId();
+  loadCurrentUser();
   loadServices();
   loadMasters();
   loadOrders();
