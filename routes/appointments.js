@@ -53,6 +53,25 @@ router.get("/master/:master_id", (req, res) => {
   });
 });
 
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `SELECT 
+      appointments.id,
+      services.name AS service_name,
+      masters.specialty AS master_name,
+      appointments.date_time
+    FROM appointments
+    JOIN services ON appointments.service_id = services.id
+    JOIN masters ON appointments.master_id = masters.id
+    WHERE appointments.id = ?`;
+  db.execute(query, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(200).json(results[0]);
+  });
+});
+
 // Створити новий запис
 router.post("/", authenticateToken, (req, res) => {
   const { client_id, master_id, date_time, service_id } = req.body;
@@ -107,25 +126,30 @@ router.post("/", authenticateToken, (req, res) => {
   });
 });
 
-// Оновити запис (змінити дату)
+// Оновити запис (змінити )
 router.put("/:appointment_id", authenticateToken, (req, res) => {
   const { appointment_id } = req.params;
-  const { date_time } = req.body;
+  const { client_id, master_id, date_time, service_id } = req.body;
 
   if (!date_time) {
     return res.status(400).json({ message: "Date time is required" });
   }
 
-  const query = "UPDATE appointments SET date_time = ? WHERE id = ?";
-  db.execute(query, [date_time, appointment_id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+  const query =
+    "UPDATE appointments SET client_id = ?, master_id = ?, date_time = ?, service_id = ? WHERE id = ?";
+  db.execute(
+    query,
+    [client_id, master_id, date_time, service_id, appointment_id],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: "Appointment not found" });
+      }
+      res.status(200).json({ message: "Appointment updated successfully" });
     }
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: "Appointment not found" });
-    }
-    res.status(200).json({ message: "Appointment updated successfully" });
-  });
+  );
 });
 
 // Видалити запис

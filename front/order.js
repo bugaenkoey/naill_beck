@@ -53,9 +53,6 @@ async function loadCurrentUser() {
 
   const userElement = document.getElementById("user");
   userElement.innerHTML = `<p> USER: ${user.username} tel: ${user.tel}</p>`;
-
-  const phone = document.getElementById("phone");
-  phone.value = user.tel;
 }
 
 async function loadServices() {
@@ -134,16 +131,7 @@ async function loadOrders() {
 
     // Конвертуємо дату в європейський формат
     const dateObj = new Date(order.date_time);
-    const formattedDate = `${String(dateObj.getDate()).padStart(
-      2,
-      "0"
-    )}.${String(dateObj.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}.${dateObj.getFullYear()} ${String(dateObj.getHours()).padStart(
-      2,
-      "0"
-    )}:${String(dateObj.getMinutes()).padStart(2, "0")}`;
+    const formattedDate = formattedEvroDate(dateObj);
 
     listItem.innerHTML = `
     <button onclick="deleteOrder(${order.id})">Видалити</button>
@@ -153,6 +141,16 @@ async function loadOrders() {
 
     ordersList.appendChild(listItem);
   });
+}
+
+function formattedEvroDate(date) {
+  const evroFormatteDate = `${String(date.getDate()).padStart(2, "0")}.${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}.${date.getFullYear()} ${String(date.getHours()).padStart(
+    2,
+    "0"
+  )}:${String(date.getMinutes()).padStart(2, "0")}`;
+  return evroFormatteDate;
 }
 
 async function deleteOrder(orderId) {
@@ -173,24 +171,86 @@ async function deleteOrder(orderId) {
   }
 }
 
-async function editOrder(orderId) {
-  const newDate = prompt("Введіть нову дату (YYYY-MM-DD HH:MM):");
-  if (newDate) {
-    const response = await fetch(`${apiBaseUrl}/appointments/${orderId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+let editedOrderId;
 
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ date_time: newDate }),
-    });
-    if (response.ok) {
-      alert("Замовлення оновлено!");
-      loadOrders();
-    } else {
-      alert("Помилка при редагуванні.");
-    }
+async function editOrder(id) {
+  // client_id, master_id, date_time, service_id;
+  editedOrderId = id; // Зберігаємо ID замовлення
+  const editOrderp = document.getElementById("editOrder");
+  const order = await fetchData(`${apiBaseUrl}/appointments/${id}`);
+  console.log(order);
+
+  // Конвертуємо дату в європейський формат
+  const dateObj = new Date(order.date_time);
+  const formattedDate = formattedEvroDate(dateObj);
+  editOrderp.innerHTML = `<p> Послуга: ${order.service_name}<br> Майстер: ${order.master_name}<br>Дата: ${formattedDate},</p>`;
+
+  if (!order) {
+    alert("Помилка: замовлення не знайдено.");
+    return;
+  }
+
+  // Завантажуємо послуги та майстрів у модальне вікно
+  const servicesSelect = document.getElementById("editService");
+  const mastersSelect = document.getElementById("editMaster");
+  const dateInput = document.getElementById("editDate");
+
+  // Очищення списків
+  servicesSelect.innerHTML = "";
+  mastersSelect.innerHTML = "";
+
+  services.forEach((service) => {
+    const option = document.createElement("option");
+    option.value = service.id;
+    option.textContent = `${service.name} - ${service.price} грн`;
+    if (service.name === order.service_name) option.selected = true;
+    servicesSelect.appendChild(option);
+  });
+
+  masters.forEach((master) => {
+    const option = document.createElement("option");
+    option.value = master.id;
+    option.textContent = master.specialty;
+    if (master.specialty === order.master_name) option.selected = true;
+    mastersSelect.appendChild(option);
+  });
+
+  // Встановлюємо поточну дату
+  dateInput.value = order.date_time.slice(0, -1);
+
+  // Відкриваємо модальне вікно
+  document.getElementById("editModal").style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("editModal").style.display = "none";
+}
+
+async function saveEditedOrder() {
+  const newServiceId = document.getElementById("editService").value;
+  const newMasterId = document.getElementById("editMaster").value;
+  const newDate = document.getElementById("editDate").value;
+
+  const response = await fetch(`${apiBaseUrl}/appointments/${editedOrderId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      client_id: client_Id,
+      service_id: newServiceId,
+      master_id: newMasterId,
+      date_time: newDate,
+    }),
+  });
+
+  if (response.ok) {
+    alert("Замовлення оновлено!");
+    closeModal();
+    loadOrders();
+  } else {
+    alert("Помилка при редагуванні.");
   }
 }
 

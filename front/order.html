@@ -7,6 +7,13 @@
     <script src="order.js"></script>
   </head>
   <body>
+    <nav>
+      <ul>
+        <li><a href="index.html">Додому</a></li>
+        <li><a href="login.html">Вхід</a></li>
+        <li><a href="register.html">Реєстрація</a></li>
+      </ul>
+    </nav>
     <div id="user">User</div>
 
     <h1>Форма замовлення манікюру</h1>
@@ -25,5 +32,40 @@
 
     <h2>Ваші поточні замовлення</h2>
     <ul id="ordersList"></ul>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <h2>Редагувати замовлення</h2>
+        <div id="editOrder"></div>
+        <label for="editService">Послуга:</label>
+        <select id="editService"></select>
+        <br />
+        <label for="editMaster">Майстер:</label>
+        <select id="editMaster"></select>
+        <br />
+        <label for="editDate">Дата та час:</label>
+        <input type="datetime-local" id="editDate" />
+
+        <button onclick="saveEditedOrder()">Зберегти зміни</button>
+        <button onclick="closeModal()">Скасувати</button>
+      </div>
+    </div>
+
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+      .modal-content {
+        text-align: center;
+      }
+    </style>
   </body>
 </html>
