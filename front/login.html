@@ -16,14 +16,23 @@
     </style>
   </head>
   <body>
+    <nav>
+      <ul>
+        <li><a href="index.html">Додому</a></li>
+        <li><a href="register.html">Реєстрація</a></li>
+      </ul>
+    </nav>
     <div class="container">
       <h2>Вхід</h2>
       <form id="loginForm">
         <input
-          type="text"
-          id="username"
-          placeholder="Ім'я користувача"
-          required
+          type="tel"
+          id="tel"
+          name="phone"
+          pattern="(\+?38)?(0\d{9})"
+          title="Введіть коректний номер телефону України"
+          value="+380"
+          placeholder="+380123456789"
         /><br /><br />
         <input
           type="password"

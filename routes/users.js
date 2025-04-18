@@ -47,9 +47,13 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-  const { username, password } = req.body;
-  const query = "SELECT * FROM users WHERE username = ?";
-  db.execute(query, [username], async (err, results) => {
+  // const { username, password } = req.body;
+  // const query = "SELECT * FROM users WHERE username = ?";
+  // db.execute(query, [username], async (err, results) => {
+
+  const { tel, password } = req.body;
+  const query = "SELECT * FROM users WHERE tel = ?";
+  db.execute(query, [tel], async (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
